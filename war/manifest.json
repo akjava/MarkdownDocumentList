@@ -1,0 +1,17 @@
+{
+"manifest_version": 2,
+  "name": "Markdown DataList",
+  "description": "create markdown files",
+  "version": "1",
+  "app": {
+    "launch": {
+      "local_path": "MarkdownDocumentList.html"
+    }
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "permissions": [
+    "unlimitedStorage"
+  ]
+}
