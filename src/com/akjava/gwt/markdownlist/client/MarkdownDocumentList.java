@@ -3,12 +3,12 @@ package com.akjava.gwt.markdownlist.client;
 import com.akjava.gwt.lib.client.HeaderAndValue;
 import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageDataList;
-import com.akjava.gwt.markdownlist.client.datalist.TextAreaBasedDataList;
+import com.akjava.gwt.lib.client.datalist.TextAreaBasedDataList;
+import com.akjava.gwt.markdowneditor.client.MarkdownEditor;
 import com.google.common.base.Optional;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -32,9 +32,11 @@ public class MarkdownDocumentList implements EntryPoint {
 		panel2.add(mlist.getSimpleDataListWidget());//list-side
 		mlist.loadData(Optional.<HeaderAndValue>absent());
 		
-		TextArea textArea=mlist.getTextArea();
-		panel1.add(textArea);
-		textArea.setSize("400px", "600px");
+		
+		MarkdownEditor editor=new MarkdownEditor();
+		panel1.add(editor);
+		mlist.addKeyUpHandler(editor.getTextArea());
+		mlist.setTextArea(editor.getTextArea());
 		
 	}
 }
