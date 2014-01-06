@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TextArea;
 
 public class MarkdownDataList extends SimpleDataListItemControler{
@@ -92,7 +93,19 @@ private TextArea textArea;
 
 	@Override
 	public void clearAll() {
-		LogUtils.log("clearAll");
+		boolean confirm=Window.confirm("Clear all data?this operation can not undo\nyou should ExportAll first.");
+		if(!confirm){
+			return;
+		}
+		List<HeaderAndValue> hvs= getDataList().getDataList();
+		for(HeaderAndValue hv:hvs){
+			getDataList().clearData(hv.getId());
+		}
+		getDataList().setCurrentId(0);//restart id
+		
+		getSimpleDataListWidget().unselect();
+		updateList();
+		
 	}
 
 	@Override
