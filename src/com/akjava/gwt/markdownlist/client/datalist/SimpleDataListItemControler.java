@@ -23,6 +23,9 @@ public abstract class SimpleDataListItemControler extends ItemIOControler{
 		simpleDataList.update();
 		if(selectedId!=-1){
 		selectById(selectedId);
+			simpleDataList.setSelectionStatus(true);
+		}else{
+			simpleDataList.setSelectionStatus(false);	
 		}
 	}
 	

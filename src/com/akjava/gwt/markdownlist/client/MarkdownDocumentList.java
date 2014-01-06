@@ -5,6 +5,7 @@ import com.akjava.gwt.lib.client.StorageDataList;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -21,7 +22,16 @@ public class MarkdownDocumentList implements EntryPoint {
 		VerticalPanel panel1=new VerticalPanel();
 		root.add(panel1);
 		
+		
+		VerticalPanel panel2=new VerticalPanel();
+		root.add(panel2);
 		MarkdownDataList mlist=new MarkdownDataList(storageDataList);
-		panel1.add(mlist.getSimpleDataListWidget());//list-side
+		panel2.add(mlist.getSimpleDataListWidget());//list-side
+		mlist.loadData(null);
+		
+		TextArea textArea=mlist.getTextArea();
+		panel1.add(textArea);
+		textArea.setSize("600px", "400px");
+		
 	}
 }

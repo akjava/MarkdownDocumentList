@@ -47,8 +47,11 @@ public void setModified(boolean modified) {
 	if(getSelection()==null){
 		return;
 	}
-	getSelection().setModified(modified);
-	cellList.redraw();
+	
+	if(getSelection().isModified()!=modified){
+		getSelection().setModified(modified);
+		cellList.redraw();
+	}
 }
 
 public List<DataListData<HeaderAndValue>> getCellData(){
@@ -72,12 +75,12 @@ add(expandButtons);
 expandButtons.setVisible(false);
 
 
-final Button save=new Button("Save");
-save.addClickHandler(new ClickHandler() {
+saveBt = new Button("Save");
+saveBt.addClickHandler(new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		//save.setEnabled(false);
-		save.setText("Saving");
+		saveBt.setText("Saving");
 		boolean done=false;
 		try{
 		done=ioControler.save();
@@ -85,7 +88,7 @@ save.addClickHandler(new ClickHandler() {
 			e.getMessage();
 			LogUtils.log(e.getMessage());
 		}
-		save.setText("Save");
+		saveBt.setText("Save");
 		//save.setEnabled(true);
 		if(done){
 			setModified(false);
@@ -93,10 +96,10 @@ save.addClickHandler(new ClickHandler() {
 		
 	}
 });
+saveBt.setEnabled(false);
+buttons.add(saveBt);
 
-buttons.add(save);
-
-Button saveAs=new Button("SaveAs",new ClickHandler() {
+saveAsBt = new Button("SaveAs",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		boolean done=ioControler.saveAs();
@@ -105,10 +108,10 @@ Button saveAs=new Button("SaveAs",new ClickHandler() {
 		}
 	}
 });
-buttons.add(saveAs);
+buttons.add(saveAsBt);
+saveAsBt.setEnabled(false);
 
-
-Button rename=new Button("Rename",new ClickHandler() {
+renameBt = new Button("Rename",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		String newName=ioControler.rename();
@@ -118,9 +121,9 @@ Button rename=new Button("Rename",new ClickHandler() {
 		}
 	}
 });
-buttons.add(rename);
+buttons.add(renameBt);
 
-Button delete=new Button("Delete",new ClickHandler() {
+deleteBt = new Button("Delete",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		boolean done=ioControler.delete();
@@ -131,18 +134,18 @@ Button delete=new Button("Delete",new ClickHandler() {
 		}
 	}
 });
-buttons.add(delete);
+buttons.add(deleteBt);
 
 
 
-Button copy=new Button("Copy",new ClickHandler() {
+copyBt = new Button("Copy",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		//copy before save data.
 		ioControler.copy(currentSelection.getData());
 	}
 });
-buttons.add(copy);
+buttons.add(copyBt);
 
 Button paste=new Button("Paste",new ClickHandler() {
 	@Override
@@ -206,7 +209,7 @@ Button doNew=new Button("New",new ClickHandler() {
 });
 buttons2.add(doNew);
 
-Button reload=new Button("Reload",new ClickHandler() {
+reloadBt = new Button("Reload",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		boolean isContinue=askContinueAction();
@@ -220,16 +223,16 @@ Button reload=new Button("Reload",new ClickHandler() {
 		}
 	}
 });
-buttons2.add(reload);
+buttons2.add(reloadBt);
 
 
-Button unselect=new Button("Unselect",new ClickHandler() {
+unselectBt = new Button("Unselect",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		unselect();
 	}
 });
-buttons2.add(unselect);
+buttons2.add(unselectBt);
 
 Button back=new Button("Back",new ClickHandler() {
 	@Override
@@ -382,6 +385,24 @@ public void unselect() {
 	ioControler.unselect();
 	currentSelection=null;
 	setModified(false);
+	
+	setSelectionStatus(false);
+}
+
+/**
+ * this called from direct selection and buttons
+ * TODO bugs called multiple
+ * @param selection
+ */
+public void setSelectionStatus(boolean selection){
+	//LogUtils.log("selection:"+selection);
+	saveBt.setEnabled(selection);
+	saveAsBt.setEnabled(selection);
+	
+	renameBt.setEnabled(selection);
+	deleteBt.setEnabled(selection);
+	copyBt.setEnabled(selection);
+	reloadBt.setEnabled(selection);
 }
 
 
@@ -496,6 +517,7 @@ private void selectFromSelectionModel(DataListData<HeaderAndValue> item){
 	ioControler.load(item.getData().getId());
 	currentSelection.setModified(false);
 	cellList.redraw();
+	setSelectionStatus(true);
 }
 
 public DataListData<HeaderAndValue> getSelection(){
@@ -567,6 +589,7 @@ public void select(int index) {
 	}
 	DataListData<HeaderAndValue> data=dataListDatas.get(index);
 	select(data);
+	setSelectionStatus(true);
 }
 
 private void select(final DataListData<HeaderAndValue> data) {
@@ -592,6 +615,20 @@ public void selectById(int id) {
 
 
 private DataListDataCell cell;
+
+private Button saveBt;
+
+private Button saveAsBt;
+
+private Button unselectBt;
+
+private Button reloadBt;
+
+private Button copyBt;
+
+private Button deleteBt;
+
+private Button renameBt;
 public CellContextMenu getCellContextMenu() {
 	return cell.getCellContextMenu();
 }

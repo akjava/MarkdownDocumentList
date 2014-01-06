@@ -6,16 +6,57 @@ import com.akjava.gwt.lib.client.HeaderAndValue;
 import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageDataList;
 import com.akjava.gwt.markdownlist.client.datalist.SimpleDataListItemControler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.ui.TextArea;
 
 public class MarkdownDataList extends SimpleDataListItemControler{
+private TextArea textArea;
+	public void setTextArea(TextArea textArea) {
+	this.textArea = textArea;
+}
 
+	public TextArea getTextArea() {
+	return textArea;
+	}
+
+	private void textModified(){
+		getSimpleDataListWidget().setModified(true);//simple modified
+	}
+	
 	public MarkdownDataList(StorageDataList dataList) {
 		super(dataList);
+		textArea=new TextArea();
+		textArea.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				
+			}
+		});
+		 textArea.addKeyUpHandler(new KeyUpHandler() {
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					
+					if(event.getNativeKeyCode()==KeyCodes.KEY_ENTER){
+						textModified();
+					}
+					else if(event.isControlKeyDown()){//copy or paste
+						textModified();
+					}
+					else{
+						textModified();
+					}
+				}
+			});
 	}
 
 	@Override
 	public HeaderAndValue createSaveData(String fileName) {
-		String text="";
+		String text=textArea.getText();
 		return new HeaderAndValue(-1,fileName,text);
 	}
 
@@ -25,9 +66,18 @@ public class MarkdownDataList extends SimpleDataListItemControler{
 		return new HeaderAndValue(-1,fileName,text);
 	}
 
+	//TODO use Optional
 	@Override
 	public void loadData(HeaderAndValue hv) {
-		LogUtils.log("loadData");
+		if(hv==null){//unselect
+			textArea.setReadOnly(true);
+			textArea.setText("CREATE NEW or SELECT");
+		}else{
+			textArea.setReadOnly(false);
+			textArea.setText(hv.getData());
+		}
+		//LogUtils.log("loadData");
+		
 	}
 
 	@Override
