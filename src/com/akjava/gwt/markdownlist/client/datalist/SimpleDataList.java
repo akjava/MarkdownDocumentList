@@ -403,6 +403,7 @@ public void setSelectionStatus(boolean selection){
 	deleteBt.setEnabled(selection);
 	copyBt.setEnabled(selection);
 	reloadBt.setEnabled(selection);
+	unselectBt.setEnabled(selection);
 }
 
 
