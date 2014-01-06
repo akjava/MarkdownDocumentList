@@ -108,7 +108,7 @@ public String rename(){
 }
 
 public boolean delete(){
-	boolean confirm=Window.confirm("Delate "+getCurrentName()+"?");
+	boolean confirm=Window.confirm("Delete "+getCurrentName()+"?");
 	if(!confirm){
 		return false;
 	}
