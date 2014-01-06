@@ -242,14 +242,14 @@ Button back=new Button("Back",new ClickHandler() {
 });
 buttons2.add(back);
 
-expandButton = new Button("expand>>",new ClickHandler() {
+expandButton = new Button("Expand>>",new ClickHandler() {
 	@Override
 	public void onClick(ClickEvent event) {
 		expandButtons.setVisible(!expandButtons.isVisible());
 		if(expandButtons.isVisible()){
-			expandButton.setText("collapse<<");
+			expandButton.setText("Collapse<<");
 		}else{
-			expandButton.setText("expand>>");
+			expandButton.setText("Expand>>");
 		}
 	}
 });
