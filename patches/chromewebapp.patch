@@ -1,0 +1,12 @@
+diff --git a/src/com/akjava/gwt/markdownlist/MarkdownDocumentList.gwt.xml b/src/com/akjava/gwt/markdownlist/MarkdownDocumentList.gwt.xml
+index 7aa5bc0..d991a19 100644
+--- a/src/com/akjava/gwt/markdownlist/MarkdownDocumentList.gwt.xml
++++ b/src/com/akjava/gwt/markdownlist/MarkdownDocumentList.gwt.xml
+@@ -29,5 +29,6 @@
+   <source path='client'/>
+   <source path='shared'/>
+ 
+-
++<set-property name="user.agent" value="safari"/>
++<add-linker name="sso" /> 
+ </module>
