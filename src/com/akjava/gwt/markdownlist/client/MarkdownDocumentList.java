@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MarkdownDocumentList implements EntryPoint {
 	private static final String MARKDOWN_DOCUMENT_LIST_DATA="MarkDwonDocumentListData";
 	public void onModuleLoad() {
-		StorageDataList storageDataList=new StorageDataList(new StorageControler(false), MARKDOWN_DOCUMENT_LIST_DATA);
+		StorageDataList storageDataList=new StorageDataList(new StorageControler(true), MARKDOWN_DOCUMENT_LIST_DATA);
 		
 		HorizontalPanel root=new HorizontalPanel();
 		RootPanel.get().add(root);
