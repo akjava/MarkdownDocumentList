@@ -161,6 +161,13 @@ private FileUploadForm uploadForm;
 
 	@Override
 	public void importData() {
+		if(getDataList().getDataList().size()>0){
+		boolean confirm=Window.confirm("Import datas:add current datas,if you prefer replace all.ClearAll first and do it again");
+		if(!confirm){
+			return;
+		}
+		}
+		
 		uploadForm = FileUtils.createSingleTextFileUploadForm(new DataURLListener() {
 			@Override
 			public void uploaded(File file, String value) {
@@ -246,13 +253,14 @@ private FileUploadForm uploadForm;
 	//TODO move somewhere
 	public static List<HeaderAndValue> textToHeaderAndValue(String text){
 		//List<HeaderAndValue> list=new ArrayList<HeaderAndValue>();
-		CSVReader reader=new CSVReader(text,'\t');
+		CSVReader reader=new CSVReader(text,'\t','"',true);
 		try {
 			List<String[]> csvs=reader.readAll();
 			return FluentIterable.from(csvs).transform(new CsvArrayToHeadAndValueFunction()).toList();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Window.alert(e.getMessage());
 		}
 		return null;
 	}
