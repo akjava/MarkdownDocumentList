@@ -49,6 +49,11 @@ private TextArea textArea;
 private HeaderAndValue copiedValue;
 private HorizontalPanel uploadPanel;
 private FileUploadForm uploadForm;
+
+/**
+ * if you need call addkeyUpHandler() for update modified
+ * @param textArea
+ */
 	public void setTextArea(TextArea textArea) {
 	this.textArea = textArea;
 }
@@ -64,14 +69,16 @@ private FileUploadForm uploadForm;
 	public TextAreaBasedDataList(StorageDataList dataList) {
 		super(dataList);
 		textArea=new TabInputableTextArea();
-		textArea.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				
-			}
-		});
-		 textArea.addKeyUpHandler(new KeyUpHandler() {
+		
+		addKeyUpHandler(textArea);
+		 
+		 
+		 getSimpleDataListWidget().setCellContextMenu(new TestContextMenu());
+		 
+	}
+	
+	public void addKeyUpHandler(TextArea text){
+		 text.addKeyUpHandler(new KeyUpHandler() {
 				@Override
 				public void onKeyUp(KeyUpEvent event) {
 					
@@ -86,10 +93,6 @@ private FileUploadForm uploadForm;
 					}
 				}
 			});
-		 
-		 
-		 getSimpleDataListWidget().setCellContextMenu(new TestContextMenu());
-		 
 	}
 
 	/**

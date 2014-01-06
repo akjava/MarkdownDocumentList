@@ -34,7 +34,7 @@ public class MarkdownDocumentList implements EntryPoint {
 		
 		TextArea textArea=mlist.getTextArea();
 		panel1.add(textArea);
-		textArea.setSize("600px", "400px");
+		textArea.setSize("400px", "600px");
 		
 	}
 }
