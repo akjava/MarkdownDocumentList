@@ -1,4 +1,4 @@
-package com.akjava.gwt.markdownlist.client;
+package com.akjava.gwt.markdownlist.client.datalist.functions;
 
 import com.akjava.gwt.lib.client.HeaderAndValue;
 import com.akjava.lib.common.utils.ValuesUtils;

@@ -1,7 +1,6 @@
-package com.akjava.gwt.markdownlist.client;
+package com.akjava.gwt.markdownlist.client.datalist;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.akjava.gwt.html5.client.download.HTML5Download;
@@ -13,14 +12,13 @@ import com.akjava.gwt.lib.client.HeaderAndValue;
 import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageDataList;
 import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
-import com.akjava.gwt.markdownlist.client.datalist.AbstractContextMenu;
-import com.akjava.gwt.markdownlist.client.datalist.SimpleDataListItemControler;
+import com.akjava.gwt.markdownlist.client.datalist.functions.CsvArrayToHeadAndValueFunction;
+import com.akjava.gwt.markdownlist.client.datalist.functions.HeadAndValueToCsvFunction;
 import com.akjava.lib.common.csv.CSVReader;
-import com.akjava.lib.common.utils.CSVUtils;
-import com.akjava.lib.common.utils.ValuesUtils;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,11 +36,15 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.TextArea;
 
 /**
- * TODO create this as simple TextAreaDataList
+ * 
+ * how to use
+ * 
+ * 
+ * 
  * @author aki
  *
  */
-public class MarkdownDataList extends SimpleDataListItemControler{
+public class TextAreaBasedDataList extends SimpleDataListItemControler{
 private TextArea textArea;
 private HeaderAndValue copiedValue;
 private HorizontalPanel uploadPanel;
@@ -59,7 +61,7 @@ private FileUploadForm uploadForm;
 		getSimpleDataListWidget().setModified(true);//simple modified
 	}
 	
-	public MarkdownDataList(StorageDataList dataList) {
+	public TextAreaBasedDataList(StorageDataList dataList) {
 		super(dataList);
 		textArea=new TabInputableTextArea();
 		textArea.addChangeHandler(new ChangeHandler() {
@@ -123,28 +125,31 @@ private FileUploadForm uploadForm;
 		return new HeaderAndValue(-1,fileName,text);
 	}
 
-	//TODO use Optional
+	
 	@Override
-	public void loadData(HeaderAndValue hv) {
-		if(hv==null){//unselect
+	public void loadData(Optional<HeaderAndValue> hv) {
+		if(hv.isPresent()){
+			textArea.setReadOnly(false);
+			textArea.setText(hv.get().getData());		
+		}else{//unselected and clear
 			textArea.setReadOnly(true);
 			textArea.setText("CREATE NEW or SELECT");
-		}else{
-			textArea.setReadOnly(false);
-			textArea.setText(hv.getData());
 		}
-		//LogUtils.log("loadData");
 		
 	}
 	
-	private String getKeyName(){
+	/**
+	 * used for export file name
+	 * @return
+	 */
+	protected String getKeyName(){
 		return "datas";
 	}
 
 	@Override
 	public void exportDatas(List<HeaderAndValue> list) {
 		String exportText=generateExportText(list);
-		Anchor anchor=new HTML5Download().generateTextDownloadLink(exportText,getKeyName()+".txt","Download data",true);
+		Anchor anchor=new HTML5Download().generateTextDownloadLink(exportText,getKeyName()+".csv","Download data",true);
 		getSimpleDataListWidget().add(anchor);
 	}
 	
@@ -162,7 +167,7 @@ private FileUploadForm uploadForm;
 	@Override
 	public void importData() {
 		if(getDataList().getDataList().size()>0){
-		boolean confirm=Window.confirm("Import datas:add current datas,if you prefer replace all.ClearAll first and do it again");
+		boolean confirm=Window.confirm("Import datas:add current datas with ignoring id,if you keep id use restore and replace all data.");
 		if(!confirm){
 			return;
 		}
@@ -222,9 +227,60 @@ private FileUploadForm uploadForm;
 		paste();
 	}
 
+	/**
+	 * restore keep id
+	 */
 	@Override
 	public void restore() {
-		LogUtils.log("restore");
+		if(getDataList().getDataList().size()>0){
+			boolean confirm=Window.confirm("Restore datas:clear current datas and restore csv datas.");
+			if(!confirm){
+				return;
+			}
+			}
+		
+		uploadForm = FileUtils.createSingleTextFileUploadForm(new DataURLListener() {
+			@Override
+			public void uploaded(File file, String value) {
+				execRestore(value);
+			}
+		}, false);
+		
+		
+		createFormPanel("Restore layers:",uploadForm);
+		getSimpleDataListWidget().add(uploadPanel);
+		
+	}
+	public void execRestore(String value){
+		//clear first
+		List<HeaderAndValue> hvs= getDataList().getDataList();
+		for(HeaderAndValue hv:hvs){
+			getDataList().clearData(hv.getId());
+		}
+		//getDataList().setCurrentId(0);
+		
+		int max=0;
+		
+		List<HeaderAndValue> list=textToHeaderAndValue(value);
+		
+		//do offset
+		//LogUtils.log("force offset");
+		//doOffset(parts.getKey(),list);
+		
+		GWT.log("upload-size:"+list.size());
+		for(HeaderAndValue hv:list){
+			if(hv.getId()>max){
+				max=hv.getId();
+			}
+			getDataList().updateData(hv.getId(),hv.getHeader(), hv.getData());
+		}
+		
+		getDataList().setCurrentId(max+1);
+		
+		if(uploadPanel!=null){
+			uploadPanel.removeFromParent();
+		}
+		updateList();
 	}
 
 	@Override

@@ -1,7 +1,10 @@
 package com.akjava.gwt.markdownlist.client;
 
+import com.akjava.gwt.lib.client.HeaderAndValue;
 import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageDataList;
+import com.akjava.gwt.markdownlist.client.datalist.TextAreaBasedDataList;
+import com.google.common.base.Optional;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -25,9 +28,9 @@ public class MarkdownDocumentList implements EntryPoint {
 		
 		VerticalPanel panel2=new VerticalPanel();
 		root.add(panel2);
-		MarkdownDataList mlist=new MarkdownDataList(storageDataList);
+		TextAreaBasedDataList mlist=new TextAreaBasedDataList(storageDataList);
 		panel2.add(mlist.getSimpleDataListWidget());//list-side
-		mlist.loadData(null);
+		mlist.loadData(Optional.<HeaderAndValue>absent());
 		
 		TextArea textArea=mlist.getTextArea();
 		panel1.add(textArea);

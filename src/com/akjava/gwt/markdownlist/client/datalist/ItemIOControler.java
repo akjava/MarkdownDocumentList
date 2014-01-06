@@ -5,9 +5,8 @@ import java.util.Stack;
 
 import com.akjava.gwt.lib.client.HeaderAndValue;
 import com.akjava.gwt.lib.client.StorageDataList;
+import com.google.common.base.Optional;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -132,9 +131,15 @@ private Stack<Integer> fowards=new  Stack<Integer>();
 public void load(int id){
 	selectedId=id;
 	//TODO confirm
+	if(id!=-1){
 	HeaderAndValue hv=dataList.getDataValue(id);
-	loadData(hv);
+	if(hv==null){
+		loadData(Optional.<HeaderAndValue>absent());
+	}else{
+		loadData(Optional.of(hv));
+	}
 	
+	}
 	
 	if(id!=-1 && (backs.size()==0 || backs.peek()!=id)){
 		backs.push(id);
@@ -148,7 +153,12 @@ public abstract void setCurrentName(String name);
 public abstract String getCurrentName();
 public abstract HeaderAndValue createSaveData(String fileName);
 public abstract HeaderAndValue createNewData(String fileName);
-public abstract void loadData(HeaderAndValue hv);
+
+/**
+ * Optional.absense means notselected;clear selection
+ * @param hv
+ */
+public abstract void loadData(Optional<HeaderAndValue> hv);
 
 public abstract void exportDatas(List<HeaderAndValue> list);
 
@@ -184,7 +194,7 @@ public abstract void restore();
 public void unselect() {
 	selectedId=-1;
 	updateList();
-	loadData(null);
+	loadData(Optional.<HeaderAndValue>absent());
 }
 
 public HeaderAndValue doNew(){
