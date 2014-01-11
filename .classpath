@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="C:/java/lib/guava-15.0.jar" sourcepath="C:/java/lib/guava-15.0-sources.jar"/>
 	<classpathentry kind="lib" path="C:/java/lib/guava-gwt-15.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GWTMarkdownEditor"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/GWTJSZip"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

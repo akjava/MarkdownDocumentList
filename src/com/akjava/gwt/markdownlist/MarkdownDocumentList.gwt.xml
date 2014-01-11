@@ -21,13 +21,15 @@
   <inherits name='com.akjava.gwt.markdowneditor.GWTMarkdownEditor'/>              
     <inherits name='com.google.gwt.json.JSON' />
 <inherits name="com.akjava.gwt.common.Common"/>
-<inherits name="com.akjava.gwt.html5.Html5widget" />
+<inherits name='com.akjava.gwt.jszip.GWTJSZip'/>
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.akjava.gwt.markdownlist.client.MarkdownDocumentList'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
   <source path='shared'/>
-
-
+<!-- 
+<set-property name="user.agent" value="safari"/>
+<add-linker name="sso" /> 
+ -->
 </module>
