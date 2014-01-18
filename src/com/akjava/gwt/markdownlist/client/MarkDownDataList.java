@@ -22,6 +22,14 @@ private MarkdownEditor editor;
 		 */
 		editor.getHtmlArea().setText("");//fresh first;
 		editor.getPreviewHTML().setHTML("");
+		
 	}
+	
+	@Override
+	public void onLoad() {
+		editor.clearHistory();
+		editor.addHistory(editor.getMarkdownText());
+	}
+	
 
 }

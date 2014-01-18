@@ -19,47 +19,47 @@ import com.akjava.gwt.markdowneditor.client.MarkdownFunctions.SimpleTextDataToTi
 import com.akjava.gwt.markdowneditor.client.MarkdownFunctions.SimpleTextKeywordLinksFunction;
 import com.akjava.lib.common.functions.StringFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.utils.TemplateUtils;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class MarkdownDocumentList implements EntryPoint {
 	private static final String MARKDOWN_DOCUMENT_LIST_DATA="MarkDwonDocumentListData";
+	private MarkDownDataList mlist;
 	public void onModuleLoad() {
 		StorageDataList storageDataList=new StorageDataList(new StorageControler(true), MARKDOWN_DOCUMENT_LIST_DATA);
 		
-		HorizontalPanel root=new HorizontalPanel();
-		RootPanel.get().add(root);
-		
-		VerticalPanel panel1=new VerticalPanel();
-		root.add(panel1);
+		DockLayoutPanel root=new DockLayoutPanel(Unit.PX);
+		RootLayoutPanel.get().add(root);
 		
 		
-		VerticalPanel panel2=new VerticalPanel();
-		root.add(panel2);
+		
+		
+		
 		final MarkdownEditor editor=new MarkdownEditor();
-		final MarkDownDataList mlist=new MarkDownDataList(editor,storageDataList);
-		panel2.add(mlist.getSimpleDataListWidget());//list-side
+		mlist = new MarkDownDataList(editor,storageDataList);
+		root.addEast(mlist.getSimpleDataListWidget(),400);//list-side
 		mlist.loadData(Optional.<SimpleTextData>absent());
 		
 		
 	
-		panel1.add(editor);
+		root.add(editor);
 		mlist.addKeyHandler(editor.getTextArea());
 		mlist.setTextArea(editor.getTextArea());
 		
@@ -83,8 +83,12 @@ public class MarkdownDocumentList implements EntryPoint {
 		mlist.getSimpleDataListWidget().getOptionButtonPanel().add(new Button("zip download",new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				List<SimpleTextData> datas=mlist.getDataList().getDataList();
+				List<SimpleTextData> datas=getDatas();
 				Collections.sort(datas, new SimpleTextDataComparator(SimpleDataList.ORDER_AZ));
+				
+				//rename tamporaly
+				
+				
 				JSZip zip=JSZip.newJSZip();
 				for(SimpleTextData data:datas){
 					zip.file(data.getName()+".md", templateData(data,datas),data.getCdate());
@@ -100,12 +104,47 @@ public class MarkdownDocumentList implements EntryPoint {
 		}));
 	}
 	
+	private List<SimpleTextData> getDatas(){
+		return mlist.getDataList().getDataList();
+		//return Lists.newArrayList(FluentIterable.from(mlist.getDataList().getDataList()).transform(new KeywordConvertFunction()));
+	}
+	
+	/**
+	 * TODO remove after finish
+	 * add keyword folder
+	 * replace image url
+	 * @author aki
+	 *
+	 */
+	/*
+	private class KeywordConvertFunction implements Function<SimpleTextData,SimpleTextData>{
+
+		@Override
+		public SimpleTextData apply(SimpleTextData input) {
+			SimpleTextData newData= input.copy();
+			if(input.getName().indexOf("/")==-1){//root file
+				if(input.getName().indexOf("index")==-1){//not index
+					newData.setName("keyword/"+input.getName());
+				}
+			}
+			
+			String replaced=newData.getData().replace("www2.akjava.com", "www.akjava.com");
+			replaced=replaced.replace("http://www3.akjava.com//img2", "http://www.akjava.com/img2");
+			
+			newData.setData(replaced);
+			
+			return newData;
+		}
+		
+	}
+	*/
+	
 	public String createKeywordLinks(List<SimpleTextData> datas){
 		
 		
-		
+		//TODO set path
 		List<List<String>> lines=FluentIterable.from(datas)
-				.transform(new SimpleTextKeywordLinksFunction("/cms/",true,".html"))
+				.transform(new SimpleTextKeywordLinksFunction("/",true,".html"))//TODO remove cms,this is temporaly
 				.toList();
 		
 		List<String> all=Lists.newArrayList();
