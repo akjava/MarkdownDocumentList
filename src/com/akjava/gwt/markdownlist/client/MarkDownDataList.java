@@ -31,5 +31,9 @@ private MarkdownEditor editor;
 		editor.addHistory(editor.getMarkdownText());
 	}
 	
+	@Override
+	public void doDoubleClick(int clientX, int clientY) {
+		editor.doConvert();
+	}
 
 }

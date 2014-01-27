@@ -41,73 +41,19 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
  */
 public class MarkdownDocumentList implements EntryPoint {
 	private static final String MARKDOWN_DOCUMENT_LIST_DATA="MarkDwonDocumentListData";
-	private MarkDownDataList mlist;
+	
 	public void onModuleLoad() {
 		StorageDataList storageDataList=new StorageDataList(new StorageControler(true), MARKDOWN_DOCUMENT_LIST_DATA);
 		
-		DockLayoutPanel root=new DockLayoutPanel(Unit.PX);
+		MarkdownDocumentListEditor root=new MarkdownDocumentListEditor(storageDataList);
 		RootLayoutPanel.get().add(root);
 		
 		
 		
 		
 		
-		final MarkdownEditor editor=new MarkdownEditor();
-		mlist = new MarkDownDataList(editor,storageDataList);
-		root.addEast(mlist.getSimpleDataListWidget(),400);//list-side
-		mlist.loadData(Optional.<SimpleTextData>absent());
-		
-		
-	
-		root.add(editor);
-		mlist.addKeyHandler(editor.getTextArea());
-		mlist.setTextArea(editor.getTextArea());
-		
-		//add sync save action
-		editor.getTextArea().addKeyDownHandler(new KeyDownHandler() {
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if(event.isControlKeyDown()){
-					if(event.getNativeKeyCode()==83){//save
-						event.preventDefault();
-						mlist.getSimpleDataListWidget().save();
-						return;
-					}
-				}
-			}
-		});
-		mlist.unselect();
-		
-	
-		
-		mlist.getSimpleDataListWidget().getOptionButtonPanel().add(new Button("zip download",new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				List<SimpleTextData> datas=getDatas();
-				Collections.sort(datas, new SimpleTextDataComparator(SimpleDataList.ORDER_AZ));
-				
-				//rename tamporaly
-				
-				
-				JSZip zip=JSZip.newJSZip();
-				for(SimpleTextData data:datas){
-					zip.file(data.getName()+".md", templateData(data,datas),data.getCdate());
-				}
-				
-				String keylinks=createKeywordLinks(datas);
-				zip.file("keyword.txt", keylinks);
-				
-				Blob blob=zip.generateBlob(null);
-				Anchor a=new HTML5Download().generateDownloadLink(blob,"application/zip","test.zip","download sample blob",true);
-				mlist.getSimpleDataListWidget().getVerticalOptionPanel().add(a);
-			}
-		}));
 	}
 	
-	private List<SimpleTextData> getDatas(){
-		return mlist.getDataList().getDataList();
-		//return Lists.newArrayList(FluentIterable.from(mlist.getDataList().getDataList()).transform(new KeywordConvertFunction()));
-	}
 	
 	/**
 	 * TODO remove after finish
@@ -139,42 +85,4 @@ public class MarkdownDocumentList implements EntryPoint {
 	}
 	*/
 	
-	public String createKeywordLinks(List<SimpleTextData> datas){
-		
-		
-		//TODO set path
-		List<List<String>> lines=FluentIterable.from(datas)
-				.transform(new SimpleTextKeywordLinksFunction("/",true,".html"))//TODO remove cms,this is temporaly
-				.toList();
-		
-		List<String> all=Lists.newArrayList();
-		for(List<String> data:lines){
-			Iterables.addAll(all, data);
-		}
-		
-		return Joiner.on("\n").join(all);
-				
-		
-	}
-	
-	
-	public String templateData(SimpleTextData data,List<SimpleTextData> datas){
-		String textData=data.getData();
-		if(textData.indexOf("${")!=-1){
-			Map<String,String> map=new HashMap<String,String>();
-			//do template
-			map.put("indexes", createIndexes(data,datas));
-			return TemplateUtils.createAdvancedText(textData, map);
-		}else{
-			return textData;
-		}
-	}
-	
-	private String createIndexes(SimpleTextData data,List<SimpleTextData> datas){
-		List<String> lines=FluentIterable.from(datas)
-		.filter(new SameDirectoryOnly(data.getName(),false))
-		.transform(new SimpleTextDataToTitleLinkTextFunction("",false,".html"))
-		.transform(new StringToPreFixAndSuffix("- ","")).toList();
-		return Joiner.on("\n").join(lines);
-	}
 }
