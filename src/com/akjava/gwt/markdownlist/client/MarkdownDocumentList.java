@@ -46,6 +46,7 @@ public class MarkdownDocumentList implements EntryPoint {
 		StorageDataList storageDataList=new StorageDataList(new StorageControler(true), MARKDOWN_DOCUMENT_LIST_DATA);
 		
 		MarkdownDocumentListEditor root=new MarkdownDocumentListEditor(storageDataList);
+		root.setStylePrimaryName("margin");
 		RootLayoutPanel.get().add(root);
 		
 		
