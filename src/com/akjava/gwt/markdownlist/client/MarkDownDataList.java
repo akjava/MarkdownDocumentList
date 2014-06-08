@@ -11,6 +11,8 @@ private MarkdownEditor editor;
 	public MarkDownDataList(MarkdownEditor editor,StorageDataList dataList) {
 		super(dataList);
 		this.editor=editor;
+		
+		unselectedText="CREATE NEW OR SELECT FROM RIGHT SIDE CONTROLER";
 	}
 	@Override
 	public void loadData(Optional<SimpleTextData> hv) {
