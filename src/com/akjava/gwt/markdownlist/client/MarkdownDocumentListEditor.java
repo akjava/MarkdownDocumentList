@@ -12,6 +12,7 @@ import com.akjava.gwt.html5.client.file.FileUploadForm;
 import com.akjava.gwt.html5.client.file.FileUtils;
 import com.akjava.gwt.html5.client.file.FileUtils.DataURLListener;
 import com.akjava.gwt.jszip.client.JSZip;
+import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageDataList;
 import com.akjava.gwt.lib.client.datalist.SimpleDataList;
 import com.akjava.gwt.lib.client.datalist.SimpleDataList.SimpleTextDataComparator;
@@ -144,7 +145,8 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 			@Override
 			public void onClick(ClickEvent event) {
 				links.clear();
-				String pName=FileNames.asSlash().getChangedExtensionName(markdownDataList.getCurrentName(), ".properties");
+				String pName=markdownDataList.getCurrentName()+".properties";
+				LogUtils.log(pName);
 				Anchor anchor=HTML5Download.get().generateTextDownloadLink(area2.getText(), pName, "download",true);
 				links.add(anchor);
 			}
