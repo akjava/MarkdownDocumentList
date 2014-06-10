@@ -80,7 +80,8 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 						markdownDataList.getSimpleDataListWidget().save();
 						return;
 					}else{
-						LogUtils.log("event-key:"+event.getNativeKeyCode());
+						
+						
 					}
 				}
 			}
