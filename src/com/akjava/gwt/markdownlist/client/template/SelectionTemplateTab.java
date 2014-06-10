@@ -3,49 +3,99 @@ package com.akjava.gwt.markdownlist.client.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.border.StrokeBorder;
+
 import com.akjava.gwt.lib.client.LogUtils;
+import com.akjava.gwt.lib.client.StorageControler;
+import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
 import com.akjava.gwt.markdowneditor.client.MarkdownEditor;
 import com.akjava.lib.common.utils.ValuesUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SelectionTemplateTab extends VerticalPanel {
 
+	public static final String KEY_SELECTION_TEMPLATE_VALUE="markdownlist_selection_template_value";
+	
 	private VerticalPanel container;
 
 	private MarkdownEditor editor;
+	private StorageControler storageControler=new StorageControler();
+
+	private TextArea editArea;
 	public SelectionTemplateTab(MarkdownEditor editor){
 		this.editor=editor;
-		
-		
+		this.setWidth("100%");
+		TabLayoutPanel tab=new TabLayoutPanel(30, Unit.PX);
+		tab.setSize("100%","500px");
+		add(tab);
 		
 		ScrollPanel scroll=new ScrollPanel();
-		this.add(scroll);
-		scroll.setSize("100%", "300px");
+		tab.add(scroll,"List");
+		scroll.setSize("100%", "500px");
 		container = new VerticalPanel();
 		scroll.add(container);
 		
 		
 		//test
-		SelectionTemplateConverter converter=new SelectionTemplateConverter();
-		List<SelectionTemplate> templates=converter.reverse().convert(TemplateBundles.INSTANCE.test().getText());
-				
-		setTemplates(templates);
 		
+		
+		//editor area
+		VerticalPanel editors=new VerticalPanel();
+		editors.setWidth("100%");
+		editArea = new TextArea();
+		editors.add(editArea);
+		editArea.setSize("100%", "400px");
+		HorizontalPanel buttons=new HorizontalPanel();
+		Button update=new Button("Update",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				try {
+					storageControler.setValue(KEY_SELECTION_TEMPLATE_VALUE, editArea.getText());
+				} catch (StorageException e) {
+					Window.alert(e.getMessage());
+				}
+				
+				loadData();
+			}
+		});
+		buttons.add(update);
+		editors.add(buttons);
+		tab.add(editors,"Edit");
+		tab.selectTab(0);
+		
+		loadData();
+	}
+	
+	public void loadData(){
+		
+		String text=storageControler.getValue(KEY_SELECTION_TEMPLATE_VALUE, TemplateBundles.INSTANCE.test().getText());
+		SelectionTemplateConverter converter=new SelectionTemplateConverter();
+		List<SelectionTemplate> templates=converter.reverse().convert(text);
+		
+		editArea.setText(text);
+		setTemplates(templates);
 	}
 	
 	public void setTemplates(List<SelectionTemplate> templates){
+		container.clear();
 		for(SelectionTemplate template:templates){
 			LogUtils.log(template);
 		}
