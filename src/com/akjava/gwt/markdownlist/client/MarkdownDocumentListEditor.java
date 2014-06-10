@@ -23,6 +23,7 @@ import com.akjava.gwt.markdowneditor.client.ExtractTextFromMarkdown.ExtractedRes
 import com.akjava.gwt.markdowneditor.client.MarkdownEditor;
 import com.akjava.gwt.markdowneditor.client.MarkdownFunctions.SimpleTextDataToTitleLinkTextFunction;
 import com.akjava.gwt.markdowneditor.client.MarkdownFunctions.SimpleTextKeywordLinksFunction;
+import com.akjava.gwt.markdownlist.client.template.SelectionTemplateTab;
 import com.akjava.lib.common.functions.StringFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.utils.FileNames;
 import com.akjava.lib.common.utils.TemplateUtils;
@@ -36,6 +37,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ClosingEvent;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -74,6 +79,8 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 						event.preventDefault();
 						markdownDataList.getSimpleDataListWidget().save();
 						return;
+					}else{
+						LogUtils.log("event-key:"+event.getNativeKeyCode());
 					}
 				}
 			}
@@ -86,6 +93,8 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 		createStripPanel(stripPanel);
 		editor.getRightTabPanel().add(stripPanel,"Extract Text");
 		
+		SelectionTemplateTab templateTab=new SelectionTemplateTab(editor);
+		editor.getRightTabPanel().add(templateTab,"Template Text");
 	
 		
 		markdownDataList.getSimpleDataListWidget().getOptionButtonPanel().add(new Button("zip download",new ClickHandler() {
@@ -110,6 +119,26 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 				markdownDataList.getSimpleDataListWidget().getVerticalOptionPanel().add(a);
 			}
 		}));
+		
+		  Window.addWindowClosingHandler(new Window.ClosingHandler() {
+		        @Override
+		        public void onWindowClosing(ClosingEvent event) {
+		        	if(markdownDataList.getSimpleDataListWidget().getSelection()!=null){
+		        		if(markdownDataList.getSimpleDataListWidget().getSelection().isModified()){
+		        			 event.setMessage("Not saved data exist.Do you want close This App?");
+		        		}
+		        	}
+		           
+		            
+		        }
+		    });
+
+		    Window.addCloseHandler(new CloseHandler<Window>() {
+		        @Override
+		        public void onClose(CloseEvent<Window> event) {
+		           
+		        }       
+		    });
 	}
 	
 	private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkdown();
