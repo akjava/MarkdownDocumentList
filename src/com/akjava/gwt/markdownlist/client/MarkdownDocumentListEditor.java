@@ -143,32 +143,58 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 	}
 	
 	private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkdown();
+	private TextArea extractArea2;
+	private TextArea extractArea3;
+	private TextArea extractArea;
 	public void createStripPanel(VerticalPanel panel){
-		final TextArea area=new TextArea();
-		area.setSize("98%", "200px");
+		extractArea = new TextArea();
+		extractArea.setSize("98%", "200px");
 	
-		final TextArea area2=new TextArea();
-		area2.setSize("98%", "200px");
+		extractArea2 = new TextArea();
+		extractArea2.setSize("98%", "200px");
 		
-		final TextArea area3=new TextArea();
-		area3.setSize("98%", "200px");
+		extractArea3 = new TextArea();
+		extractArea3.setSize("98%", "200px");
+		extractArea3.setReadOnly(true);
 		
 		HorizontalPanel topButtons=new HorizontalPanel();
 		topButtons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		
-		Button update=new Button("Extract",new ClickHandler() {
+		Button update=new Button("Extract to template & properties",new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				String text=markdownDataList.getTextArea().getText();
 				ExtractedResult extractedResult=extractTextFromMarkdown.extract(text,true);
-				area.setText(extractedResult.getExtractedMarkdownTemplateText());
+				extractArea.setText(extractedResult.getExtractedMarkdownTemplateText());
 				
 				String maps=Joiner.on("\n").withKeyValueSeparator("=").join(extractedResult.getMarkdownTemplateMap());
-				area2.setText(maps);
+				extractArea2.setText(maps);
 			}
 		});
 		topButtons.add(update);
+		
+		
+		panel.add(topButtons);
+		panel.add(extractArea);
+		
+		HorizontalPanel secondButtons=new HorizontalPanel();
+		secondButtons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+		panel.add(secondButtons);
+		
+		
+		secondButtons.add(new Label("Load Properties"));
+		FileUploadForm upload=FileUtils.createSingleTextFileUploadForm(new DataURLListener() {
+			@Override
+			public void uploaded(File file, String text) {
+				extractArea2.setText(text);
+				
+				doExtractRemix();
+			}
+		}, true, "UTF-8");
+		secondButtons.add(upload);
+		
+		
 		final HorizontalPanel links=new HorizontalPanel();
 		
 		Button download=new Button("Download as properties",new ClickHandler() {
@@ -177,54 +203,71 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 				links.clear();
 				String pName=markdownDataList.getCurrentName()+".properties";
 				LogUtils.log(pName);
-				Anchor anchor=HTML5Download.get().generateTextDownloadLink(area2.getText(), pName, "download",true);
+				Anchor anchor=HTML5Download.get().generateTextDownloadLink(extractArea2.getText(), pName, "click here to download property file",true);
 				links.add(anchor);
 			}
 		});
-		topButtons.add(download);
-		topButtons.add(links);
+		secondButtons.add(download);
+		secondButtons.add(links);
 		
-		panel.add(topButtons);
-		panel.add(area);
-		panel.add(area2);
 		
-		HorizontalPanel middleButtons=new HorizontalPanel();
-		middleButtons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+		panel.add(extractArea2);
 		
-		Button mix=new Button("ReMix",new ClickHandler() {
-			
+		HorizontalPanel thirdButtons=new HorizontalPanel();
+		thirdButtons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+		
+		
+
+		final Button copy=new Button("Add to List>>",new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				String text=area2.getText();
-				String[] lines=text.split("\n");
-				Map<String,String> keyMap=new HashMap<String, String>();
-				for(String line:lines){
-					int index=line.indexOf("=");
-					if(index!=-1){
-						String key=line.substring(0,index).trim();
-						String value=line.substring(index+1).trim();
-						keyMap.put(key, value);
-					}
+				String title=Window.prompt("new file name", markdownDataList.getCurrentName());
+				if(title==null){
+					return;//cancelled
 				}
-				
-				//do merge
-				String mixed=TemplateUtils.createText(area.getText(), keyMap);
-				area3.setText(mixed);
+				markdownDataList.getDataList().addData(title, extractArea3.getText());
+				markdownDataList.updateList();
 			}
 		});
-		middleButtons.add(mix);
+		copy.setEnabled(false);
 		
-		middleButtons.add(new Label("Load Properties"));
-		FileUploadForm upload=FileUtils.createSingleTextFileUploadForm(new DataURLListener() {
+		Button mix=new Button("ReMix template & properties",new ClickHandler() {
 			@Override
-			public void uploaded(File file, String text) {
-				area2.setText(text);
+			public void onClick(ClickEvent event) {
+				doExtractRemix();
+				copy.setEnabled(true);
 			}
-		}, true, "UTF-8");
-		middleButtons.add(upload);
-		panel.add(middleButtons);
-		panel.add(area3);
+		});
+		thirdButtons.add(mix);
+		
+		
+		panel.add(thirdButtons);
+		panel.add(extractArea3);
+		
+		thirdButtons.add(copy);
+		
 	}
+	
+	private void doExtractRemix(){
+		String text=extractArea2.getText();
+		String[] lines=text.split("\n");
+		Map<String,String> keyMap=new HashMap<String, String>();
+		for(String line:lines){
+			int index=line.indexOf("=");
+			if(index!=-1){
+				String key=line.substring(0,index).trim();
+				String value=line.substring(index+1).trim();
+				keyMap.put(key, value);
+			}
+		}
+		
+		//do merge
+		String mixed=TemplateUtils.createText(extractArea.getText(), keyMap);
+		extractArea3.setText(mixed);
+		
+		extractArea3.selectAll();
+	}
+	
 	
 	public void addData(String fileName,String markdown){
 		SimpleTextData data=new SimpleTextData(-1, fileName, markdown);
