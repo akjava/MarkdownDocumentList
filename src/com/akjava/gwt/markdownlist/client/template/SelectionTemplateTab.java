@@ -130,7 +130,10 @@ public class SelectionTemplateTab extends VerticalPanel {
 						if(text.isEmpty()){//no selection,line-mode
 							
 							
+							//LogUtils.log("line:'"+selection.getCurrentLine().getSelection()+"' length="+selection.getCurrentLine().getSelection().length());
+							
 							String line=selection.getCurrentLine().getLineEndRemovedSelection();
+							//LogUtils.log("removed:"+line);
 							selection.getCurrentLine().replaceInLine(getTemplatedText(line));
 							
 							/*
@@ -182,7 +185,7 @@ public class SelectionTemplateTab extends VerticalPanel {
 							if(Character.isDigit(sub.charAt(i))){
 								end=i;
 							}else{
-								LogUtils.log(i+":"+sub.charAt(i));
+								//LogUtils.log(i+":"+sub.charAt(i));
 								break;
 							}
 						}
@@ -206,7 +209,7 @@ public class SelectionTemplateTab extends VerticalPanel {
 			} while (index!=-1);
 			
 			//base text
-			LogUtils.log(Joiner.on(",").join(texts));
+			//LogUtils.log(Joiner.on(",").join(texts));
 			
 			for(String text:texts){
 				if(text.equals("$value")){
@@ -218,7 +221,7 @@ public class SelectionTemplateTab extends VerticalPanel {
 					String remain=text.substring("$selection".length());
 					int number=ValuesUtils.toInt(remain, 0);
 					if(number!=0){
-						LogUtils.log("number:"+number +" of "+template.getSelections().size());
+						//LogUtils.log("number:"+number +" of "+template.getSelections().size());
 						//create ListBox
 						List<String> vs=template.getSelections().get(number-1);
 						ListBox listBox=new ListBox();
