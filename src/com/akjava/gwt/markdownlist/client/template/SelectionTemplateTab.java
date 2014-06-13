@@ -40,14 +40,14 @@ public class SelectionTemplateTab extends VerticalPanel {
 	private TextArea editArea;
 	public SelectionTemplateTab(MarkdownEditor editor){
 		this.editor=editor;
-		this.setWidth("100%");
+		this.setWidth("98%");
 		TabLayoutPanel tab=new TabLayoutPanel(30, Unit.PX);
-		tab.setSize("100%","500px");
+		tab.setSize("100%","100%");
 		add(tab);
 		
 		ScrollPanel scroll=new ScrollPanel();
 		tab.add(scroll,"List");
-		scroll.setSize("100%", "500px");
+		scroll.setSize("98%", "98%");//"460px"
 		container = new VerticalPanel();
 		scroll.add(container);
 		

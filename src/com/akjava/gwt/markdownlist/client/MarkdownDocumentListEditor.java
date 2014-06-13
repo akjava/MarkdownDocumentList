@@ -95,6 +95,7 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 		editor.getRightTabPanel().add(stripPanel,"Extract Text");
 		
 		SelectionTemplateTab templateTab=new SelectionTemplateTab(editor);
+		templateTab.setHeight("100%");
 		editor.getRightTabPanel().add(templateTab,"Template Text");
 	
 		
