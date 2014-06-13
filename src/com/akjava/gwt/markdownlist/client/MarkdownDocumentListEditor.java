@@ -77,7 +77,9 @@ public class MarkdownDocumentListEditor extends DockLayoutPanel{
 				if(event.isControlKeyDown()){
 					if(event.getNativeKeyCode()==83){//save
 						event.preventDefault();
-						markdownDataList.getSimpleDataListWidget().save();
+						if(markdownDataList.getSimpleDataListWidget().getSelection()!=null){
+							markdownDataList.getSimpleDataListWidget().save();
+						}
 						return;
 					}else{
 						
