@@ -9,6 +9,7 @@ import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
+import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
 import com.akjava.gwt.markdowneditor.client.MarkdownEditor;
 import com.akjava.lib.common.utils.ValuesUtils;
 import com.google.common.base.Function;
@@ -58,7 +59,7 @@ public class SelectionTemplateTab extends VerticalPanel {
 		//editor area
 		VerticalPanel editors=new VerticalPanel();
 		editors.setWidth("100%");
-		editArea = new TextArea();
+		editArea = new TabInputableTextArea();
 		editors.add(editArea);
 		editArea.setSize("100%", "400px");
 		HorizontalPanel buttons=new HorizontalPanel();
@@ -97,7 +98,7 @@ public class SelectionTemplateTab extends VerticalPanel {
 	public void setTemplates(List<SelectionTemplate> templates){
 		container.clear();
 		for(SelectionTemplate template:templates){
-			LogUtils.log(template);
+			//LogUtils.log(template);
 		}
 		List<SelectionTemplateWidget> widgets=FluentIterable.from(templates).transform(new WidgetFunction()).toList();
 		for(SelectionTemplateWidget widget:widgets){
