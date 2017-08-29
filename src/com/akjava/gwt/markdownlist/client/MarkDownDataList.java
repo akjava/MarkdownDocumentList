@@ -1,5 +1,6 @@
 package com.akjava.gwt.markdownlist.client;
 
+import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageDataList;
 import com.akjava.gwt.lib.client.datalist.SimpleTextData;
 import com.akjava.gwt.lib.client.datalist.TextAreaBasedDataList;
@@ -22,15 +23,19 @@ private MarkdownEditor editor;
 		 * because for just check the mdtext,converting is annoying.
 		 * but in future double and load & convert would be supported
 		 */
+		if(editor!=null){ //called TextAreaBasedDataList's unselect
 		editor.getHtmlArea().setText("");//fresh first;
 		editor.getPreviewHTML().setHTML("");
+		}
 		
 	}
 	
 	@Override
 	public void onLoad() {
+		if(editor!=null){ //called TextAreaBasedDataList's unselect
 		editor.clearHistory();
 		editor.addHistory(editor.getMarkdownText());
+		}
 	}
 	
 	@Override

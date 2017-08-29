@@ -5,7 +5,6 @@
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GWTLib2011"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/html5gwt"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GWTMarkdownEditor"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GWTJSZip"/>
 	<classpathentry kind="lib" path="C:/java/lib/guava-16.0.1.jar" sourcepath="C:/java/lib/guava-16.0.1-sources.jar"/>

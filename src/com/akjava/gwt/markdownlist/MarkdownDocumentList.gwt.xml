@@ -18,10 +18,11 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
            
-  <inherits name='com.akjava.gwt.markdowneditor.GWTMarkdownEditor'/>              
+             
     <inherits name='com.google.gwt.json.JSON' />
 <inherits name="com.akjava.gwt.common.Common"/>
 <inherits name='com.akjava.gwt.jszip.GWTJSZip'/>
+<inherits name='com.akjava.gwt.markdowneditor.GWTMarkdownEditor'/>   
   <!-- Specify the app entry point class.                         -->
 
 
